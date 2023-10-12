@@ -1,0 +1,36 @@
+mode: daemonset
+
+presets:
+  kubernetesAttributes:
+    enabled: true
+  kubeletMetrics:
+    enabled: true
+  logsCollection:
+    enabled: true
+
+config:
+  exporters:
+    otlphttp:
+      endpoint: "http://tempo-distributor:4318"
+      tls:
+        insecure: true
+        insecure_skip_verify: true
+    loki:
+      endpoint: "http://loki:3100/loki/api/v1/push"
+      headers:
+        X-Scope-OrgID: "1"
+      tls:
+        insecure: true
+        insecure_skip_verify: true
+
+  service:
+    pipelines:
+      traces:
+        receivers: [otlp]
+        exporters: [otlphttp]
+      # metrics:
+      #   receivers: [otlp]
+      #   exporters: [otlphttp]
+      logs:
+        receivers: [filelog]
+        exporters: [loki]

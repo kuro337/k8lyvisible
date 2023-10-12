@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dice-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dice-server
+  template:
+    metadata:
+      labels:
+        app: dice-server
+    spec:
+      containers:
+        - name: dice-server
+          image: ghcr.io/kuro337/jar-trace-simple-tempo:latest
+          env:
+            - name: OTEL_SERVICE_NAME
+              value: "dice-server"
+            - name: OTEL_TRACES_EXPORTER
+              value: "otlp"
+            - name: OTEL_METRICS_EXPORTER
+              value: "logging"
+            - name: OTEL_LOGS_EXPORTER
+              value: "logging"
+            - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+              value: "http://otel-collector-cluster-opentelemetry-collector:4318"
+            - name: OTEL_EXPORTER_OTLP_INSECURE
+              value: "true"
+            - name: OTEL_EXPORTER_OTLP_TRACES_PROTOCOL
+              value: "http/protobuf"
+
+          ports:
+            - containerPort: 8080
+      imagePullSecrets:
+        - name: ghcr-secret
+# OTEL_SERVICE_NAME=dice-server \
+# OTEL_TRACES_EXPORTER=logging \
+# OTEL_METRICS_EXPORTER=logging \
+# OTEL_LOGS_EXPORTER=logging \

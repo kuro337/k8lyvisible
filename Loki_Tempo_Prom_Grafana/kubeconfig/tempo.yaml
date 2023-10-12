@@ -1,0 +1,24 @@
+global:
+  clusterDomain: "cluster.local"
+gateway:
+  enabled: true
+storage:
+  trace:
+    backend: local
+traces:
+  otlp:
+    grpc:
+      enabled: true
+    http:
+      enabled: true
+  zipkin:
+    enabled: false
+  jaeger:
+    thriftHttp:
+      enabled: false
+  opencensus:
+    enabled: false
+distributor:
+  config:
+    log_received_spans:
+      enabled: true
